@@ -471,6 +471,7 @@ INSTANTIATE_TEST_SUITE_P(
                       result_type_param(b8),
                       result_type_param(s32),
                       result_type_param(u32),
+                      result_type_param(s8),
                       result_type_param(u8),
                       result_type_param(s64),
                       result_type_param(u64),
@@ -490,6 +491,7 @@ INSTANTIATE_TEST_SUITE_P(
                       result_type_param(f32, b8, f32),
                       result_type_param(f32, s32, f32),
                       result_type_param(f32, u32, f32),
+                      result_type_param(f32, s8, f32),
                       result_type_param(f32, u8, f32),
                       result_type_param(f32, s64, f32),
                       result_type_param(f32, u64, f32),
@@ -510,6 +512,7 @@ INSTANTIATE_TEST_SUITE_P(
                       result_type_param(f64, b8,  f64),
                       result_type_param(f64, s32, f64),
                       result_type_param(f64, u32, f64),
+                      result_type_param(f64, s8,  f64),
                       result_type_param(f64, u8,  f64),
                       result_type_param(f64, s64, f64),
                       result_type_param(f64, u64, f64),
@@ -542,7 +545,8 @@ class ResultTypeScalar : public ::testing::Test {
 };
 
 typedef ::testing::Types<float, double, unsigned int, int, short,
-                         unsigned short, char, unsigned char, half_float::half>
+                         unsigned short, char, signed char, unsigned char,
+                         half_float::half>
     TestTypes;
 TYPED_TEST_SUITE(ResultTypeScalar, TestTypes);
 
