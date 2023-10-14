@@ -63,8 +63,9 @@ void gemm_fallback<half>(Array<half> & /*out*/, af_mat_prop /*optLhs*/,
 }
 
 template<typename Ti, typename To>
-void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alpha,
-          const Array<Ti> &lhs, const Array<Ti> &rhs, const To *beta) {
+void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs,
+          const To *alpha, const Array<Ti> &lhs, const Array<Ti> &rhs,
+          const To *beta) {
 #if defined(WITH_LINEAR_ALGEBRA)
     // Do not force offload gemm on OSX Intel devices
     if (OpenCLCPUOffload(false) &&
@@ -132,9 +133,10 @@ void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alph
 }
 
 template<>
-void gemm<schar, float>(Array<float> &out, af_mat_prop optLhs, af_mat_prop optRhs,
-                const float *alpha, const Array<schar> &lhs,
-                const Array<schar> &rhs, const float *beta) {
+void gemm<schar, float>(Array<float> &out, af_mat_prop optLhs,
+                        af_mat_prop optRhs, const float *alpha,
+                        const Array<schar> &lhs, const Array<schar> &rhs,
+                        const float *beta) {
     TYPE_ERROR(3, af_dtype::s8);
 }
 

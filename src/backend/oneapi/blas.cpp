@@ -98,8 +98,9 @@ bool isStrideMonotonic(const af::dim4 &dim) {
 }
 
 template<typename Ti, typename To>
-void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alpha,
-          const Array<Ti> &lhs, const Array<Ti> &rhs, const To *beta) {
+void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs,
+          const To *alpha, const Array<Ti> &lhs, const Array<Ti> &rhs,
+          const To *beta) {
     const auto lOpts = toBlasTranspose(optLhs);
     const auto rOpts = toBlasTranspose(optRhs);
 
@@ -123,19 +124,19 @@ void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alph
             if constexpr (std::is_same_v<Ti, arrayfire::common::half>) {
                 // currently no half support for gemv, use gemm instead
                 gemmDispatch<Ti>(getQueue(), lOpts, rOpts, M, N, K, alpha, lhs,
-                                lStrides[1], rhs, rStrides[1], beta, out,
-                                oStrides[1]);
+                                 lStrides[1], rhs, rStrides[1], beta, out,
+                                 oStrides[1]);
             } else {
                 dim_t incr =
                     (optRhs == AF_MAT_NONE) ? rStrides[0] : rStrides[1];
                 gemvDispatch<Ti>(getQueue(), lOpts, rOpts, lDims[0], lDims[1],
-                                alpha, lhs, lStrides[1], rhs, incr, beta, out,
-                                oStrides[0]);
+                                 alpha, lhs, lStrides[1], rhs, incr, beta, out,
+                                 oStrides[0]);
             }
         } else {
             gemmDispatch<Ti>(getQueue(), lOpts, rOpts, M, N, K, alpha, lhs,
-                            lStrides[1], rhs, rStrides[1], beta, out,
-                            oStrides[1]);
+                             lStrides[1], rhs, rStrides[1], beta, out,
+                             oStrides[1]);
         }
     } else {  // if batched
         using Dt = arrayfire::oneapi::data_t<Ti>;
@@ -207,9 +208,10 @@ void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alph
 }
 
 template<>
-void gemm<schar, float>(Array<float> &out, af_mat_prop optLhs, af_mat_prop optRhs,
-                const float *alpha, const Array<schar> &lhs,
-                const Array<schar> &rhs, const float *beta) {
+void gemm<schar, float>(Array<float> &out, af_mat_prop optLhs,
+                        af_mat_prop optRhs, const float *alpha,
+                        const Array<schar> &lhs, const Array<schar> &rhs,
+                        const float *beta) {
     TYPE_ERROR(3, af_dtype::s8);
 }
 

@@ -31,9 +31,9 @@ using arrayfire::common::half;
 using arrayfire::common::SparseArrayBase;
 using detail::cdouble;
 using detail::cfloat;
-using detail::schar;
 using detail::gemm;
 using detail::matmul;
+using detail::schar;
 
 namespace {
 template<typename T>
@@ -48,7 +48,7 @@ static inline void gemm(af_array *out, af_mat_prop optLhs, af_mat_prop optRhs,
                         const To *alpha, const af_array lhs, const af_array rhs,
                         const To *betas) {
     gemm<Ti, To>(getArray<To>(*out), optLhs, optRhs, alpha, getArray<Ti>(lhs),
-            getArray<Ti>(rhs), betas);
+                 getArray<Ti>(rhs), betas);
 }
 
 template<typename T>
@@ -220,8 +220,8 @@ af_err af_gemm(af_array *out, const af_mat_prop optLhs,
                 break;
             case s8:
                 gemm<schar, float>(&output, optLhs, optRhs,
-                         static_cast<const float *>(alpha), lhs, rhs,
-                         static_cast<const float *>(beta));
+                                   static_cast<const float *>(alpha), lhs, rhs,
+                                   static_cast<const float *>(beta));
                 break;
             default: TYPE_ERROR(3, lhs_type);
         }
@@ -256,7 +256,7 @@ af_err af_matmul(af_array *out, const af_array lhs, const af_array rhs,
 
         af_dtype lhs_type = lhsInfo.getType();
 
-        af_array gemm_out = 0;
+        af_array gemm_out      = 0;
         af_dtype gemm_out_type = (lhs_type != s8) ? lhs_type : f32;
         AF_CHECK(af_create_handle(&gemm_out, oDims.ndims(), oDims.get(),
                                   gemm_out_type));
@@ -298,11 +298,10 @@ af_err af_matmul(af_array *out, const af_array lhs, const af_array rhs,
                                  &beta));
                 break;
             }
-            case s8:
-            {
+            case s8: {
                 float alpha = 1.0;
                 float beta  = 0.0;
-                AF_CHECK(af_gemm(&gemm_out,optLhs, optRhs, &alpha, lhs, rhs,
+                AF_CHECK(af_gemm(&gemm_out, optLhs, optRhs, &alpha, lhs, rhs,
                                  &beta));
                 break;
             }

@@ -220,8 +220,9 @@ toCblasTranspose(af_mat_prop opt) {
 }
 
 template<typename Ti, typename To>
-void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alpha,
-          const Array<Ti> &lhs, const Array<Ti> &rhs, const To *beta) {
+void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs,
+          const To *alpha, const Array<Ti> &lhs, const Array<Ti> &rhs,
+          const To *beta) {
     const CBLAS_TRANSPOSE lOpts = toCblasTranspose(optLhs);
     const CBLAS_TRANSPOSE rOpts = toCblasTranspose(optRhs);
 
@@ -304,23 +305,23 @@ void gemm(Array<To> &out, af_mat_prop optLhs, af_mat_prop optRhs, const To *alph
             const MKL_INT ldc = oStrides[1];
 
             gemm_batch_func<Ti>()(CblasColMajor, &lOpts, &rOpts, &M, &N, &K,
-                                 alpha_batched.getScale(), lptrs.data(), &lda,
-                                 rptrs.data(), &ldb, beta_batched.getScale(),
-                                 optrs.data(), &ldc, 1, &batchSize);
+                                  alpha_batched.getScale(), lptrs.data(), &lda,
+                                  rptrs.data(), &ldb, beta_batched.getScale(),
+                                  optrs.data(), &ldc, 1, &batchSize);
 #else
             for (int n = 0; n < batchSize; n++) {
                 if (rDims[bColDim] == 1) {
                     dim_t incr =
                         (optRhs == AF_MAT_NONE) ? rStrides[0] : rStrides[1];
                     gemv_func<Ti>()(CblasColMajor, lOpts, lDims[0], lDims[1],
-                                   alpha_.getScale(), lptrs[n], lStrides[1],
-                                   rptrs[n], incr, beta_.getScale(), optrs[n],
-                                   oStrides[0]);
+                                    alpha_.getScale(), lptrs[n], lStrides[1],
+                                    rptrs[n], incr, beta_.getScale(), optrs[n],
+                                    oStrides[0]);
                 } else {
                     gemm_func<Ti>()(CblasColMajor, lOpts, rOpts, M, N, K,
-                                   alpha_.getScale(), lptrs[n], lStrides[1],
-                                   rptrs[n], rStrides[1], beta_.getScale(),
-                                   optrs[n], oStrides[1]);
+                                    alpha_.getScale(), lptrs[n], lStrides[1],
+                                    rptrs[n], rStrides[1], beta_.getScale(),
+                                    optrs[n], oStrides[1]);
                 }
             }
 #endif
@@ -342,9 +343,10 @@ void gemm<half>(Array<half> &out, af_mat_prop optLhs, af_mat_prop optRhs,
 }
 
 template<>
-void gemm<schar, float>(Array<float> &out, af_mat_prop optLhs, af_mat_prop optRhs,
-                const float *alpha, const Array<schar> &lhs,
-                const Array<schar> &rhs, const float *beta) {
+void gemm<schar, float>(Array<float> &out, af_mat_prop optLhs,
+                        af_mat_prop optRhs, const float *alpha,
+                        const Array<schar> &lhs, const Array<schar> &rhs,
+                        const float *beta) {
     TYPE_ERROR(3, af_dtype::s8);
 }
 
